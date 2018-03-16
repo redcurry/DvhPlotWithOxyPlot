@@ -7,6 +7,9 @@ namespace DvhPlot.Script
     {
         public void Execute(ScriptContext context, Window window)
         {
+            var mainViewModel = new MainViewModel(context.PlanSetup);
+            var mainView = new MainView(mainViewModel);
+            window.Content = mainView;
         }
     }
 }
