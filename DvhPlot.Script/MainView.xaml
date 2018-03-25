@@ -2,18 +2,34 @@
     x:Class="DvhPlot.Script.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:oxy="http://oxyplot.org/wpf"
     >
+
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
         <ItemsControl
+            Grid.Column="0"
             ItemsSource="{Binding Structures}"
             >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <CheckBox
+                        DataContext="{Binding}"
                         Content="{Binding Id}"
+                        Checked="Structure_OnChecked"
+                        Unchecked="Structure_OnUnchecked"
                         />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <oxy:PlotView
+            Grid.Column="1"
+            Model="{Binding PlotModel}"
+            />
     </Grid>
 </UserControl>
