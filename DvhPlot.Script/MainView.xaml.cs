@@ -20,19 +20,19 @@ namespace DvhPlot.Script
             DataContext = viewModel;
         }
 
-        private void Structure_OnChecked(object checkBox, RoutedEventArgs e)
+        private void Structure_OnChecked(object checkBoxObject, RoutedEventArgs e)
         {
-            _vm.AddDvhCurve(GetStructure(checkBox));
+            _vm.AddDvhCurve(GetStructure(checkBoxObject));
         }
 
-        private void Structure_OnUnchecked(object checkBox, RoutedEventArgs e)
+        private void Structure_OnUnchecked(object checkBoxObject, RoutedEventArgs e)
         {
-            _vm.RemoveDvhCurve(GetStructure(checkBox));
+            _vm.RemoveDvhCurve(GetStructure(checkBoxObject));
         }
 
-        private Structure GetStructure(object checkBoxObj)
+        private Structure GetStructure(object checkBoxObject)
         {
-            var checkbox = (CheckBox)checkBoxObj;
+            var checkbox = (CheckBox)checkBoxObject;
             var structure = (Structure)checkbox.DataContext;
             return structure;
         }
