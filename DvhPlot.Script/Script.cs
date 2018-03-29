@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using DvhPlot.Script;
-using OxyPlot.Wpf;
 using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS

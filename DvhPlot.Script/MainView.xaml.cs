@@ -7,14 +7,14 @@ namespace DvhPlot.Script
 {
     public partial class MainView : UserControl
     {
+        // Create dummy PlotView to force OxyPlot.Wpf to be loaded
+        private static readonly PlotView PlotView = new PlotView();
+
         private readonly MainViewModel _vm;
 
         public MainView(MainViewModel viewModel)
         {
             _vm = viewModel;
-
-            // Create dummy PlotView to force OxyPlot.Wpf to be loaded
-            new PlotView();
 
             InitializeComponent();
             DataContext = viewModel;
