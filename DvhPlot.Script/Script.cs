@@ -31,6 +31,7 @@ namespace VMS.TPS
         {
             var mainViewModel = new MainViewModel(planSetup);
             var mainView = new MainView(mainViewModel);
+            window.Title = "DVH Plots";
             window.Content = mainView;
         }
     }
