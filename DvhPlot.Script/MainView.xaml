@@ -5,7 +5,7 @@
     xmlns:oxy="http://oxyplot.org/wpf"
     >
 
-    <Grid>
+    <Grid Margin="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
