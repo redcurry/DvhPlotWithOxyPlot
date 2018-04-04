@@ -21,9 +21,9 @@ namespace DvhPlot.Script
             PlotModel = CreatePlotModel();
         }
 
-        public IEnumerable<Structure> Structures { get; }
+        public IEnumerable<Structure> Structures { get; private set; }
 
-        public PlotModel PlotModel { get; }
+        public PlotModel PlotModel { get; private set; }
 
         public void AddDvhCurve(Structure structure)
         {
@@ -41,7 +41,9 @@ namespace DvhPlot.Script
 
         private IEnumerable<Structure> GetPlatStructures()
         {
-            return _plan.StructureSet?.Structures;
+            return _plan.StructureSet != null
+                ? _plan.StructureSet.Structures
+                : null;
         }
 
         private PlotModel CreatePlotModel()
@@ -73,7 +75,8 @@ namespace DvhPlot.Script
         private Series CreateDvhSeries(string structureId, DVHData dvh)
         {
             var series = new LineSeries {Tag = structureId};
-            series.Points.AddRange(dvh.CurveData.Select(CreateDataPoint));
+            var points = dvh.CurveData.Select(CreateDataPoint);
+            series.Points.AddRange(points);
             return series;
         }
 
