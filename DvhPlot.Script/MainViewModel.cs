@@ -47,27 +47,45 @@ namespace DvhPlot.Script
         private PlotModel CreatePlotModel()
         {
             var plotModel = new PlotModel();
-            plotModel.Axes.Add(new LinearAxis {Title = "Dose [Gy]", Position = AxisPosition.Bottom});
-            plotModel.Axes.Add(new LinearAxis {Title = "Volume [cc]", Position = AxisPosition.Left});
+
+            plotModel.Axes.Add(new LinearAxis
+            {
+                Title = "Dose [Gy]",
+                Position = AxisPosition.Bottom
+            });
+
+            plotModel.Axes.Add(new LinearAxis
+            {
+                Title = "Volume [cc]",
+                Position = AxisPosition.Left
+            });
+
             return plotModel;
         }
 
         private DVHData CalculateDvh(Structure structure)
         {
             return _plan.GetDVHCumulativeData(structure,
-                DoseValuePresentation.Absolute, VolumePresentation.AbsoluteCm3, 0.01);
+                DoseValuePresentation.Absolute,
+                VolumePresentation.AbsoluteCm3, 0.01);
         }
 
         private Series CreateDvhSeries(string structureId, DVHData dvh)
         {
             var series = new LineSeries {Tag = structureId};
-            series.Points.AddRange(dvh.CurveData.Select(x => new DataPoint(x.DoseValue.Dose, x.Volume)));
+            series.Points.AddRange(dvh.CurveData.Select(CreateDataPoint));
             return series;
+        }
+
+        private DataPoint CreateDataPoint(DVHPoint p)
+        {
+            return new DataPoint(p.DoseValue.Dose, p.Volume);
         }
 
         private Series FindSeries(string structureId)
         {
-            return PlotModel.Series.FirstOrDefault(x => (string)x.Tag == structureId);
+            return PlotModel.Series.FirstOrDefault(x =>
+                (string)x.Tag == structureId);
         }
 
         private void UpdatePlot()
