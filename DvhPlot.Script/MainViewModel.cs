@@ -17,7 +17,7 @@ namespace DvhPlot.Script
         {
             _plan = plan;
 
-            Structures = GetPlatStructures();
+            Structures = GetPlanStructures();
             PlotModel = CreatePlotModel();
         }
 
@@ -39,7 +39,7 @@ namespace DvhPlot.Script
             UpdatePlot();
         }
 
-        private IEnumerable<Structure> GetPlatStructures()
+        private IEnumerable<Structure> GetPlanStructures()
         {
             return _plan.StructureSet != null
                 ? _plan.StructureSet.Structures
