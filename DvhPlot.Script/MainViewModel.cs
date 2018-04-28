@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -37,6 +38,14 @@ namespace DvhPlot.Script
             var series = FindSeries(structure.Id);
             PlotModel.Series.Remove(series);
             UpdatePlot();
+        }
+
+        public void ExportPlotAsPdf(string filePath)
+        {
+            using (var stream = File.Create(filePath))
+            {
+                PdfExporter.Export(PlotModel, stream, 600, 400);
+            }
         }
 
         private IEnumerable<Structure> GetPlanStructures()

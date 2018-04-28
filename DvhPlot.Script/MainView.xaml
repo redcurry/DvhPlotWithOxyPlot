@@ -29,6 +29,15 @@
         <oxy:PlotView
             Grid.Column="1"
             Model="{Binding PlotModel}"
-            />
+            >
+            <oxy:PlotView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Export to PDF..."
+                        Click="ExportPlotAsPdf"
+                    />
+                </ContextMenu>
+            </oxy:PlotView.ContextMenu>
+        </oxy:PlotView>
     </Grid>
 </UserControl>

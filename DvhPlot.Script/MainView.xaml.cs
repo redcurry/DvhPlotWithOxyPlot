@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using OxyPlot.Wpf;
 using VMS.TPS.Common.Model.API;
 
@@ -35,6 +36,29 @@ namespace DvhPlot.Script
             var checkbox = (CheckBox)checkBoxObject;
             var structure = (Structure)checkbox.DataContext;
             return structure;
+        }
+
+        private void ExportPlotAsPdf(object sender, RoutedEventArgs e)
+        {
+            var filePath = GetPdfSavePath();
+            if (filePath != null)
+                _vm.ExportPlotAsPdf(filePath);
+        }
+
+        private string GetPdfSavePath()
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Title = "Export to PDF",
+                Filter = "PDF Files (*.pdf)|*.pdf"
+            };
+
+            var dialogResult = saveFileDialog.ShowDialog();
+
+            if (dialogResult == true)
+                return saveFileDialog.FileName;
+            else
+                return null;
         }
     }
 }
