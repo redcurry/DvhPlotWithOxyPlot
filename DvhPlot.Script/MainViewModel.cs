@@ -49,7 +49,12 @@ namespace DvhPlot.Script
         private PlotModel CreatePlotModel()
         {
             var plotModel = new PlotModel();
+            AddAxes(plotModel);
+            return plotModel;
+        }
 
+        private static void AddAxes(PlotModel plotModel)
+        {
             plotModel.Axes.Add(new LinearAxis
             {
                 Title = "Dose [Gy]",
@@ -61,8 +66,6 @@ namespace DvhPlot.Script
                 Title = "Volume [cc]",
                 Position = AxisPosition.Left
             });
-
-            return plotModel;
         }
 
         private DVHData CalculateDvh(Structure structure)
