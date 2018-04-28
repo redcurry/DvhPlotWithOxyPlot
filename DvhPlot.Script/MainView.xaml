@@ -18,7 +18,6 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <CheckBox
-                        DataContext="{Binding}"
                         Content="{Binding Id}"
                         Checked="Structure_OnChecked"
                         Unchecked="Structure_OnUnchecked"
