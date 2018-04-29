@@ -59,42 +59,51 @@ namespace DvhPlot.Script
         {
             var plotModel = new PlotModel();
             AddAxes(plotModel);
+            AddSeries(plotModel);
             return plotModel;
         }
 
-        private static void AddAxes(PlotModel plotModel)
+        private void AddAxes(PlotModel plotModel)
         {
-            plotModel.Axes.Add(new LinearAxis
-            {
-                Title = "Dose [Gy]",
-                Position = AxisPosition.Bottom
-            });
+            var xAxis = new CategoryAxis
+                {Title = "Beam", Position = AxisPosition.Bottom};
+            var beams = _plan.Beams.Where(b => !b.IsSetupField).Take(5);
+            var beamIds = new[] {"A-0", "A-72", "A-144", "A-216", "A-288"};
+            xAxis.Labels.AddRange(beamIds);
+            plotModel.Axes.Add(xAxis);
 
-            plotModel.Axes.Add(new LinearAxis
-            {
-                Title = "Volume [cc]",
-                Position = AxisPosition.Left
-            });
+            var yAxis = new LinearAxis
+                {Title = "Meterset [MU]", Position = AxisPosition.Left};
+            plotModel.Axes.Add(yAxis);
+        }
+
+        private void AddSeries(PlotModel plotModel)
+        {
+            var series = new ColumnSeries();
+            var beams = _plan.Beams.Where(b => !b.IsSetupField).Take(5);
+            var items = beams.Select(b => new ColumnItem(b.Meterset.Value));
+            series.Items.AddRange(items);
+            plotModel.Series.Add(series);
         }
 
         private DVHData CalculateDvh(Structure structure)
         {
             return _plan.GetDVHCumulativeData(structure,
                 DoseValuePresentation.Absolute,
-                VolumePresentation.AbsoluteCm3, 0.01);
+                VolumePresentation.AbsoluteCm3, 0.1);
         }
 
         private Series CreateDvhSeries(string structureId, DVHData dvh)
         {
-            var series = new LineSeries {Tag = structureId};
+            var series = new ScatterSeries {Tag = structureId};
             var points = dvh.CurveData.Select(CreateDataPoint);
             series.Points.AddRange(points);
             return series;
         }
 
-        private DataPoint CreateDataPoint(DVHPoint p)
+        private ScatterPoint CreateDataPoint(DVHPoint p)
         {
-            return new DataPoint(p.DoseValue.Dose, p.Volume);
+            return new ScatterPoint(p.DoseValue.Dose, p.Volume);
         }
 
         private Series FindSeries(string structureId)
