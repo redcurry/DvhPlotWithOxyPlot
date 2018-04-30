@@ -58,7 +58,7 @@ namespace DvhPlot.Script
         private PlotModel CreatePlotModel()
         {
             var plotModel = new PlotModel();
-            AddAxes(plotModel);
+            //AddAxes(plotModel);
             AddSeries(plotModel);
             return plotModel;
         }
@@ -79,10 +79,15 @@ namespace DvhPlot.Script
 
         private void AddSeries(PlotModel plotModel)
         {
-            var series = new ColumnSeries();
+            var series = new PieSeries
+            {
+                InsideLabelColor = OxyColors.White,
+                OutsideLabelFormat = "{0:f0} MU ({2:f0}%)"
+            };
             var beams = _plan.Beams.Where(b => !b.IsSetupField).Take(5);
-            var items = beams.Select(b => new ColumnItem(b.Meterset.Value));
-            series.Items.AddRange(items);
+            var slices = beams.Select(b => new PieSlice(b.Id, b.Meterset.Value));
+            foreach (var slice in slices)
+                series.Slices.Add(slice);
             plotModel.Series.Add(series);
         }
 
