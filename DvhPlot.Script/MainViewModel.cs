@@ -57,8 +57,12 @@ namespace DvhPlot.Script
 
         private PlotModel CreatePlotModel()
         {
-            var plotModel = new PlotModel();
+            var plotModel = new PlotModel
+            {
+                PlotAreaBackground = OxyColor.FromAColor(230, OxyColors.Black)
+            };
             AddAxes(plotModel);
+            SetupLegend(plotModel);
             return plotModel;
         }
 
@@ -67,14 +71,37 @@ namespace DvhPlot.Script
             plotModel.Axes.Add(new LinearAxis
             {
                 Title = "Dose [Gy]",
+                TitleFontSize = 14,
+                TitleFontWeight = FontWeights.Bold,
+                AxisTitleDistance = 15,
+                MajorGridlineColor = OxyColor.FromAColor(64, OxyColors.White),
+                MinorGridlineColor = OxyColor.FromAColor(32, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Solid,
                 Position = AxisPosition.Bottom
             });
 
             plotModel.Axes.Add(new LinearAxis
             {
                 Title = "Volume [cc]",
+                TitleFontSize = 14,
+                TitleFontWeight = FontWeights.Bold,
+                AxisTitleDistance = 15,
+                MajorGridlineColor = OxyColor.FromAColor(64, OxyColors.White),
+                MinorGridlineColor = OxyColor.FromAColor(32, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Solid,
                 Position = AxisPosition.Left
             });
+        }
+
+        private void SetupLegend(PlotModel plotModel)
+        {
+            plotModel.LegendBorder = OxyColors.Black;
+            plotModel.LegendBackground = OxyColor.FromAColor(32, OxyColors.Black);
+            plotModel.LegendPosition = LegendPosition.BottomCenter;
+            plotModel.LegendOrientation = LegendOrientation.Horizontal;
+            plotModel.LegendPlacement = LegendPlacement.Outside;
         }
 
         private DVHData CalculateDvh(Structure structure)
@@ -86,10 +113,39 @@ namespace DvhPlot.Script
 
         private Series CreateDvhSeries(string structureId, DVHData dvh)
         {
-            var series = new LineSeries {Tag = structureId};
+            var series = new LineSeries
+            {
+                Title = structureId,
+                Tag = structureId,
+                Color = GetStructureColor(structureId),
+                StrokeThickness = GetLineThickness(structureId),
+                LineStyle = GetLineStyle(structureId)
+            };
             var points = dvh.CurveData.Select(CreateDataPoint);
             series.Points.AddRange(points);
             return series;
+        }
+
+        private OxyColor GetStructureColor(string structureId)
+        {
+            var structures = _plan.StructureSet.Structures;
+            var structure = structures.First(x => x.Id == structureId);
+            var color = structure.Color;
+            return OxyColor.FromRgb(color.R, color.G, color.B);
+        }
+
+        private double GetLineThickness(string structureId)
+        {
+            if (structureId.ToUpper().Contains("PTV"))
+                return 5;
+            return 2;
+        }
+
+        private LineStyle GetLineStyle(string structureId)
+        {
+            if (structureId.ToUpper().Contains("_R"))
+                return LineStyle.Dash;
+            return LineStyle.Solid;
         }
 
         private DataPoint CreateDataPoint(DVHPoint p)
