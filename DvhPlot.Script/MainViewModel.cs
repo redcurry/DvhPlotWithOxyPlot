@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OxyPlot;
@@ -65,25 +66,73 @@ namespace DvhPlot.Script
 
         private void AddAxes(PlotModel plotModel)
         {
-            var xAxis = new CategoryAxis
-                {Title = "Beam", Position = AxisPosition.Bottom};
-            var beams = _plan.Beams.Where(b => !b.IsSetupField).Take(5);
-            var beamIds = new[] {"A-0", "A-72", "A-144", "A-216", "A-288"};
-            xAxis.Labels.AddRange(beamIds);
+            var xAxis = new LinearAxis
+                {Title = "X", Position = AxisPosition.Bottom,};
             plotModel.Axes.Add(xAxis);
 
             var yAxis = new LinearAxis
-                {Title = "Meterset [MU]", Position = AxisPosition.Left};
+                {Title = "Y", Position = AxisPosition.Left};
             plotModel.Axes.Add(yAxis);
+
+            var zAxis = new LinearColorAxis
+            {
+                Title = "Dose [Gy]",
+                Position = AxisPosition.Top,
+                Palette = OxyPalettes.Rainbow(256),
+                Maximum = 33.1
+            };
+            plotModel.Axes.Add(zAxis);
         }
 
         private void AddSeries(PlotModel plotModel)
         {
-            var series = new ColumnSeries();
-            var beams = _plan.Beams.Where(b => !b.IsSetupField).Take(5);
-            var items = beams.Select(b => new ColumnItem(b.Meterset.Value));
-            series.Items.AddRange(items);
-            plotModel.Series.Add(series);
+            plotModel.Series.Add(CreateHeatMap());
+        }
+
+        private Series CreateHeatMap()
+        {
+            return new HeatMapSeries
+            {
+                X0 = 0, X1 = _plan.Dose.XSize - 1,
+                Y0 = 0, Y1 = _plan.Dose.YSize - 1,
+                Data = GetDoseData()
+            };
+        }
+
+        private double[,] GetDoseData()
+        {
+            _plan.DoseValuePresentation = DoseValuePresentation.Absolute;
+            var dose = _plan.Dose;
+            var data = new int[dose.XSize, dose.YSize];
+            dose.GetVoxels((int)PlaneIndex, data);
+            return ConvertToDoseMatrix(data);
+        }
+
+        private double[,] ConvertToDoseMatrix(int[,] ints)
+        {
+            var dose = _plan.Dose;
+            var doseMatrix = new double[dose.XSize, dose.YSize];
+            for (int i = 0; i < dose.XSize; i++)
+                for (int j = 0; j < dose.YSize; j++)
+                    doseMatrix[i, j] = dose.VoxelToDoseValue(ints[i, j]).Dose;
+            return doseMatrix;
+        }
+
+        private double _planeIndex;
+        public double PlaneIndex
+        {
+            get { return _planeIndex; }
+            set
+            {
+                _planeIndex = value;
+                PlotModel.Series[0] = CreateHeatMap();
+                PlotModel.InvalidatePlot(false);
+            }
+        }
+
+        public int MaximumPlaneIndex
+        {
+            get { return _plan.Dose.ZSize - 1; }
         }
 
         private DVHData CalculateDvh(Structure structure)

@@ -26,18 +26,30 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <oxy:PlotView
+        <DockPanel
             Grid.Column="1"
-            Model="{Binding PlotModel}"
             >
-            <oxy:PlotView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem
-                        Header="Export to PDF..."
-                        Click="ExportPlotAsPdf"
-                    />
-                </ContextMenu>
-            </oxy:PlotView.ContextMenu>
-        </oxy:PlotView>
+            <Slider
+                DockPanel.Dock="Top"
+                Value="{Binding PlaneIndex}"
+                Minimum="0"
+                Maximum="{Binding MaximumPlaneIndex}"
+                Orientation="Horizontal"
+                />
+            <oxy:PlotView
+                DockPanel.Dock="Top"
+                Model="{Binding PlotModel}"
+                >
+                <oxy:PlotView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem
+                            Header="Export to PDF..."
+                            Click="ExportPlotAsPdf"
+                        />
+                    </ContextMenu>
+                </oxy:PlotView.ContextMenu>
+            </oxy:PlotView>
+        </DockPanel>
+
     </Grid>
 </UserControl>
